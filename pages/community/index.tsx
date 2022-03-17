@@ -5,10 +5,10 @@ const Community: NextPage = () => {
     <div className="space-y-8 py-16 px-4">
       {[...Array(10)].map((_, i) => (
         <div key={i} className="flex cursor-pointer flex-col items-start">
-          <span className="flex items-center rounded-full border-b-[2px] bg-gray-100 px-2.5 py-0.5 text-xs font-medium">
+          <span className="flex items-center rounded-full border-b-[2px] bg-gray-100 px-2.5 py-0.5 pl-4 text-xs font-medium">
             동네 질문
           </span>
-          <div className="mt-2 text-gray-700">
+          <div className="mt-2 pl-4 text-gray-700">
             <span className="font-medium text-orange-500">Q.</span> 동네에
             괜찮은 두부 전골집 있을까요?
           </div>
@@ -16,7 +16,7 @@ const Community: NextPage = () => {
             <span>레도</span>
             <span>2시간 전</span>
           </div>
-          <div className="mt-3 flex w-full space-x-5 border-t border-b-2 py-2.5 text-gray-700">
+          <div className="mt-3 flex w-full space-x-5 border-t border-b-2 px-4 py-2.5 text-gray-700">
             <span className="flex items-center space-x-2 text-sm">
               <svg
                 className="h-4 w-4"
