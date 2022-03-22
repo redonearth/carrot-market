@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import Button from '../components/button';
+import Input from '../components/input';
 import { joinClassNames } from '../libs/utils';
 
 export default function Enter() {
@@ -35,38 +37,21 @@ export default function Enter() {
             </button>
           </div>
         </div>
-        <form className="mt-8 flex flex-col">
-          <label htmlFor="input" className="text-sm font-medium text-gray-700">
-            {method === 'email' ? '이메일 주소' : null}
-            {method === 'phone' ? '휴대폰 번호' : null}
-          </label>
-          <div className="mt-1">
-            {method === 'email' ? (
-              <input
-                id="input"
-                type="email"
-                className="w-full appearance-none rounded-md border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500"
-                required
-              />
-            ) : null}
-            {method === 'phone' ? (
-              <div className="flex rounded-md shadow-sm">
-                <span className="flex select-none items-center justify-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-sm text-gray-500">
-                  +82
-                </span>
-                <input
-                  id="input"
-                  type="number"
-                  className="w-full appearance-none rounded-md rounded-l-none border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500"
-                  required
-                />
-              </div>
-            ) : null}
-          </div>
-          <button className="mt-4 rounded-md border-transparent bg-orange-500 py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2">
-            {method === 'email' ? '로그인 링크 받기' : null}
-            {method === 'phone' ? '인증번호 받기' : null}
-          </button>
+        <form className="mt-8 flex flex-col space-y-4">
+          {method === 'email' ? (
+            <Input name="email" label="이메일 주소" type="email" required />
+          ) : null}
+          {method === 'phone' ? (
+            <Input
+              name="phone"
+              label="휴대폰 번호"
+              type="number"
+              kind="phone"
+              required
+            />
+          ) : null}
+          {method === 'email' ? <Button text="로그인 링크 받기" /> : null}
+          {method === 'phone' ? <Button text="인증번호 받기" /> : null}
         </form>
         <div className="mt-8">
           <div className="relative">
