@@ -1,7 +1,12 @@
+import React, { ReactDOM } from 'react';
+
 interface InputProps {
   name: string;
   label: string;
   kind?: 'text' | 'phone' | 'price';
+  type: React.HTMLInputTypeAttribute;
+  placeholder?: string;
+  required?: boolean;
   [key: string]: any;
 }
 
@@ -9,6 +14,9 @@ export default function Input({
   name,
   label,
   kind = 'text',
+  type,
+  placeholder,
+  required = false,
   ...rest
 }: InputProps) {
   return (
@@ -19,6 +27,8 @@ export default function Input({
       {kind === 'text' ? (
         <input
           id={name}
+          type={type}
+          required={required}
           {...rest}
           className="w-full appearance-none rounded-md border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500"
         />
@@ -30,6 +40,8 @@ export default function Input({
           </span>
           <input
             id={name}
+            type={type}
+            required={required}
             {...rest}
             className="w-full appearance-none rounded-md rounded-l-none border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500"
           />
@@ -42,6 +54,8 @@ export default function Input({
           </div>
           <input
             id={name}
+            type={type}
+            required={required}
             {...rest}
             className="w-full appearance-none rounded-md border-gray-300 px-3 py-2 pl-7 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500"
           />
