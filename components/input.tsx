@@ -2,13 +2,13 @@ import React from 'react';
 import type { UseFormRegisterReturn } from 'react-hook-form';
 
 interface InputProps {
+  register?: UseFormRegisterReturn;
   name: string;
   label: string;
   kind?: 'text' | 'phone' | 'price';
   type: React.HTMLInputTypeAttribute;
   placeholder?: string;
   required?: boolean;
-  register: UseFormRegisterReturn;
 }
 
 export default function Input({
