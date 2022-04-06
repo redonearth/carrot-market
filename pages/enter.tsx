@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Button from '../components/button';
 import Input from '../components/input';
+import useMutation from '../libs/client/useMutation';
 import { joinClassNames } from '../libs/client/utils';
 
 interface IEnterForm {
@@ -11,7 +12,7 @@ interface IEnterForm {
 }
 
 const Enter: NextPage = () => {
-  const [submitting, setSubmitting] = useState(false);
+  const [enter, { loading, data, error }] = useMutation('/api/users/enter');
   const { register, handleSubmit, reset } = useForm<IEnterForm>();
   const [method, setMethod] = useState<'email' | 'phone'>('email');
   const onEmailClick = () => {
@@ -22,18 +23,11 @@ const Enter: NextPage = () => {
     reset();
     setMethod('phone');
   };
-  const onValid = (data: IEnterForm) => {
-    setSubmitting(true);
-    fetch('/api/users/enter', {
-      method: 'POST',
-      body: JSON.stringify(data),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }).then(() => {
-      setSubmitting(false);
-    });
+  const onValid = (validForm: IEnterForm) => {
+    if (loading) return;
+    enter(validForm);
   };
+  console.log(loading, data, error);
   return (
     <div className="mt-16 px-4">
       <h3 className="text-center text-3xl font-bold">캐럿 마켓 로그인</h3>
@@ -89,12 +83,12 @@ const Enter: NextPage = () => {
           ) : null}
           {method === 'email' ? (
             <Button
-              text={submitting ? '잠시만 기다려주세요...' : '로그인 링크 받기'}
+              text={loading ? '잠시만 기다려주세요...' : '로그인 링크 받기'}
             />
           ) : null}
           {method === 'phone' ? (
             <Button
-              text={submitting ? '잠시만 기다려주세요...' : '인증번호 받기'}
+              text={loading ? '잠시만 기다려주세요...' : '인증번호 받기'}
             />
           ) : null}
         </form>
