@@ -1,4 +1,5 @@
 import React from 'react';
+import type { UseFormRegisterReturn } from 'react-hook-form';
 
 interface InputProps {
   name: string;
@@ -7,17 +8,17 @@ interface InputProps {
   type: React.HTMLInputTypeAttribute;
   placeholder?: string;
   required?: boolean;
-  [key: string]: any;
+  register: UseFormRegisterReturn;
 }
 
 export default function Input({
+  register,
   name,
   label,
   kind = 'text',
   type,
   placeholder,
   required = false,
-  ...rest
 }: InputProps) {
   return (
     <div>
@@ -26,10 +27,11 @@ export default function Input({
       </label>
       {kind === 'text' ? (
         <input
+          {...register}
           id={name}
           type={type}
+          placeholder={placeholder}
           required={required}
-          {...rest}
           className="w-full appearance-none rounded-md border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500"
         />
       ) : null}
@@ -39,10 +41,11 @@ export default function Input({
             +82
           </span>
           <input
+            {...register}
             id={name}
             type={type}
+            placeholder={placeholder}
             required={required}
-            {...rest}
             className="w-full appearance-none rounded-md rounded-l-none border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500"
           />
         </div>
@@ -53,10 +56,11 @@ export default function Input({
             <span className="text-sm text-gray-500">₩</span>
           </div>
           <input
+            {...register}
             id={name}
             type={type}
+            placeholder={placeholder}
             required={required}
-            {...rest}
             className="w-full appearance-none rounded-md border-gray-300 px-3 py-2 pl-7 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500"
           />
           <div className="pointer-events-none absolute right-0 flex items-center pr-3">

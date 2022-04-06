@@ -1,12 +1,28 @@
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import Button from '../components/button';
 import Input from '../components/input';
 import { joinClassNames } from '../libs/utils';
 
+interface IEnterForm {
+  email?: string;
+  phone?: string;
+}
+
 export default function Enter() {
+  const { register, handleSubmit, reset } = useForm<IEnterForm>();
   const [method, setMethod] = useState<'email' | 'phone'>('email');
-  const onEmailClick = () => setMethod('email');
-  const onPhoneClick = () => setMethod('phone');
+  const onEmailClick = () => {
+    reset();
+    setMethod('email');
+  };
+  const onPhoneClick = () => {
+    reset();
+    setMethod('phone');
+  };
+  const onValid = (data: IEnterForm) => {
+    console.log(data);
+  };
   return (
     <div className="mt-16 px-4">
       <h3 className="text-center text-3xl font-bold">캐럿 마켓 로그인</h3>
@@ -37,12 +53,22 @@ export default function Enter() {
             </button>
           </div>
         </div>
-        <form className="mt-8 flex flex-col space-y-4">
+        <form
+          onSubmit={handleSubmit(onValid)}
+          className="mt-8 flex flex-col space-y-4"
+        >
           {method === 'email' ? (
-            <Input name="email" label="이메일 주소" type="email" required />
+            <Input
+              register={register('email')}
+              name="email"
+              label="이메일 주소"
+              type="email"
+              required
+            />
           ) : null}
           {method === 'phone' ? (
             <Input
+              register={register('phone')}
               name="phone"
               label="휴대폰 번호"
               type="number"
