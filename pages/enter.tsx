@@ -1,15 +1,17 @@
+import { NextPage } from 'next';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Button from '../components/button';
 import Input from '../components/input';
-import { joinClassNames } from '../libs/utils';
+import { joinClassNames } from '../libs/client/utils';
 
 interface IEnterForm {
   email?: string;
   phone?: string;
 }
 
-export default function Enter() {
+const Enter: NextPage = () => {
+  const [submitting, setSubmitting] = useState(false);
   const { register, handleSubmit, reset } = useForm<IEnterForm>();
   const [method, setMethod] = useState<'email' | 'phone'>('email');
   const onEmailClick = () => {
@@ -21,7 +23,16 @@ export default function Enter() {
     setMethod('phone');
   };
   const onValid = (data: IEnterForm) => {
-    console.log(data);
+    setSubmitting(true);
+    fetch('/api/users/enter', {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then(() => {
+      setSubmitting(false);
+    });
   };
   return (
     <div className="mt-16 px-4">
@@ -76,8 +87,16 @@ export default function Enter() {
               required
             />
           ) : null}
-          {method === 'email' ? <Button text="로그인 링크 받기" /> : null}
-          {method === 'phone' ? <Button text="인증번호 받기" /> : null}
+          {method === 'email' ? (
+            <Button
+              text={submitting ? '잠시만 기다려주세요...' : '로그인 링크 받기'}
+            />
+          ) : null}
+          {method === 'phone' ? (
+            <Button
+              text={submitting ? '잠시만 기다려주세요...' : '인증번호 받기'}
+            />
+          ) : null}
         </form>
         <div className="mt-8">
           <div className="relative">
@@ -118,4 +137,6 @@ export default function Enter() {
       </div>
     </div>
   );
-}
+};
+
+export default Enter;
