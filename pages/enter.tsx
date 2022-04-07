@@ -11,9 +11,24 @@ interface IEnterForm {
   phone?: string;
 }
 
+interface ITokenForm {
+  token: string;
+}
+
+interface IMutationResult {
+  ok: boolean;
+}
+
 const Enter: NextPage = () => {
-  const [enter, { loading, data, error }] = useMutation('/api/users/enter');
+  const [enter, { loading, data, error }] =
+    useMutation<IMutationResult>('/api/users/enter');
+  const [
+    confirmToken,
+    { loading: tokenLoading, data: tokenData, error: tokenError },
+  ] = useMutation<IMutationResult>('/api/users/confirm');
   const { register, handleSubmit, reset } = useForm<IEnterForm>();
+  const { register: tokenRegister, handleSubmit: tokenHandleSubmit } =
+    useForm<ITokenForm>();
   const [method, setMethod] = useState<'email' | 'phone'>('email');
   const onEmailClick = () => {
     reset();
@@ -27,71 +42,96 @@ const Enter: NextPage = () => {
     if (loading) return;
     enter(validForm);
   };
-  console.log(loading, data, error);
+  const onTokenValid = (validForm: ITokenForm) => {
+    if (tokenLoading) return;
+    confirmToken(validForm);
+  };
+  console.log(data);
   return (
     <div className="mt-16 px-4">
       <h3 className="text-center text-3xl font-bold">캐럿 마켓 로그인</h3>
-      <div className="mt-8">
-        <div className="flex flex-col items-center">
-          <div className="mt-8 grid w-full grid-cols-2 border-b-2">
-            <button
-              className={joinClassNames(
-                'border-b-2 pb-4 font-medium',
-                method === 'email'
-                  ? 'border-orange-500 text-orange-400'
-                  : 'border-transparent text-gray-500'
-              )}
-              onClick={onEmailClick}
-            >
-              이메일
-            </button>
-            <button
-              className={joinClassNames(
-                'border-b-2 pb-4 font-medium',
-                method === 'phone'
-                  ? 'border-orange-500 text-orange-400'
-                  : 'border-transparent text-gray-500'
-              )}
-              onClick={onPhoneClick}
-            >
-              휴대폰
-            </button>
-          </div>
-        </div>
-        <form
-          onSubmit={handleSubmit(onValid)}
-          className="mt-8 flex flex-col space-y-4"
-        >
-          {method === 'email' ? (
+      <div className="mt-12">
+        {data?.ok ? (
+          <form
+            onSubmit={tokenHandleSubmit(onTokenValid)}
+            className="mt-8 flex flex-col space-y-4"
+          >
             <Input
-              register={register('email')}
-              name="email"
-              label="이메일 주소"
-              type="email"
-              required
-            />
-          ) : null}
-          {method === 'phone' ? (
-            <Input
-              register={register('phone')}
-              name="phone"
-              label="휴대폰 번호"
+              register={tokenRegister('token')}
+              name="token"
+              label="인증번호"
               type="number"
-              kind="phone"
               required
             />
-          ) : null}
-          {method === 'email' ? (
             <Button
-              text={loading ? '잠시만 기다려주세요...' : '로그인 링크 받기'}
+              text={tokenLoading ? '잠시만 기다려주세요...' : '인증하기'}
             />
-          ) : null}
-          {method === 'phone' ? (
-            <Button
-              text={loading ? '잠시만 기다려주세요...' : '인증번호 받기'}
-            />
-          ) : null}
-        </form>
+          </form>
+        ) : (
+          <>
+            <div className="flex flex-col items-center">
+              <div className="mt-8 grid w-full grid-cols-2 border-b-2">
+                <button
+                  className={joinClassNames(
+                    'border-b-2 pb-4 font-medium',
+                    method === 'email'
+                      ? 'border-orange-500 text-orange-400'
+                      : 'border-transparent text-gray-500'
+                  )}
+                  onClick={onEmailClick}
+                >
+                  이메일
+                </button>
+                <button
+                  className={joinClassNames(
+                    'border-b-2 pb-4 font-medium',
+                    method === 'phone'
+                      ? 'border-orange-500 text-orange-400'
+                      : 'border-transparent text-gray-500'
+                  )}
+                  onClick={onPhoneClick}
+                >
+                  휴대폰
+                </button>
+              </div>
+            </div>
+            <form
+              onSubmit={handleSubmit(onValid)}
+              className="mt-8 flex flex-col space-y-4"
+            >
+              {method === 'email' ? (
+                <Input
+                  register={register('email')}
+                  name="email"
+                  label="이메일 주소"
+                  type="email"
+                  required
+                />
+              ) : null}
+              {method === 'phone' ? (
+                <Input
+                  register={register('phone')}
+                  name="phone"
+                  label="휴대폰 번호"
+                  type="number"
+                  kind="phone"
+                  required
+                />
+              ) : null}
+              {method === 'email' ? (
+                <Button
+                  text={loading ? '잠시만 기다려주세요...' : '로그인 링크 받기'}
+                />
+              ) : null}
+              {method === 'phone' ? (
+                <Button
+                  text={loading ? '잠시만 기다려주세요...' : '인증번호 받기'}
+                />
+              ) : null}
+            </form>
+          </>
+        )}
+
         <div className="mt-8">
           <div className="relative">
             <div className="absolute w-full border-t border-gray-300" />

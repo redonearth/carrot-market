@@ -12,7 +12,7 @@ async function handler(
   res: NextApiResponse<IResponseType>
 ) {
   const { email, phone } = req.body;
-  const user = email ? { email } : phone ? { phone: +phone } : null;
+  const user = email ? { email } : phone ? { phone } : null;
   if (!user) return res.status(400).json({ ok: false });
   const payload = Math.floor(100000 + Math.random() * 900000) + '';
   const token = await client.token.create({
@@ -32,21 +32,21 @@ async function handler(
     },
   });
   if (email) {
-    const email = await mail.send({
+    /* const email = await mail.send({
       from: 'wona23@gmail.com',
       to: 'redo@kakao.com',
       subject: '캐럿 마켓 인증 메일 (테스트)',
       text: `인증 번호는 ${payload}입니다.`,
       html: `<strong>인증 번호는 ${payload}입니다.</strong>`,
     });
-    console.log(email);
+    console.log(email); */
   } else if (phone) {
-    const message = await twilioClient.messages.create({
+    /* const message = await twilioClient.messages.create({
       messagingServiceSid: process.env.TWILIO_MESSAGING_SERVICE_SID,
       to: process.env.MY_PHONE!,
       body: `인증 번호는 ${payload}입니다.`,
     });
-    console.log(message);
+    console.log(message); */
   }
   return res.json({
     ok: true,
