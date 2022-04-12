@@ -2,10 +2,17 @@ import type { NextPage } from 'next';
 import FloatingButton from '@components/floating-button';
 import Item from '@components/item';
 import Layout from '@components/layout';
+import useUser from '@libs/client/useUser';
+import Head from 'next/head';
 
 const Home: NextPage = () => {
+  const user = useUser();
+  console.log(user);
   return (
     <Layout title="홈" hasTabBar>
+      <Head>
+        <title>캐럿 마켓</title>
+      </Head>
       <div className="flex flex-col space-y-5 divide-y">
         {[...Array(20)].map((_, i) => (
           <Item
