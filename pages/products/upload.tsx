@@ -3,11 +3,40 @@ import Button from '@components/button';
 import Input from '@components/input';
 import Layout from '@components/layout';
 import TextArea from '@components/textarea';
+import { useForm } from 'react-hook-form';
+import useMutation from '@libs/client/useMutation';
+import { useEffect } from 'react';
+import { Product } from '@prisma/client';
+import { useRouter } from 'next/router';
+
+interface IUploadProductForm {
+  name: string;
+  price: number;
+  description: string;
+}
+
+interface IUploadProductMutation {
+  ok: boolean;
+  product: Product;
+}
 
 const Upload: NextPage = () => {
+  const router = useRouter();
+  const { register, handleSubmit } = useForm<IUploadProductForm>();
+  const [uploadProduct, { loading, data }] =
+    useMutation<IUploadProductMutation>('/api/products');
+  const onValid = (data: IUploadProductForm) => {
+    if (loading) return;
+    uploadProduct(data);
+  };
+  useEffect(() => {
+    if (data?.ok) {
+      router.push(`/products/${data?.product.id}`);
+    }
+  }, [data, router]);
   return (
     <Layout title="상품 등록" canGoBack>
-      <form className="space-y-4 p-4">
+      <form className="space-y-4 p-4" onSubmit={handleSubmit(onValid)}>
         <div>
           <label className="flex h-48 w-full cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-gray-300 text-gray-600 hover:border-orange-500 hover:text-orange-500">
             <svg
@@ -27,8 +56,15 @@ const Upload: NextPage = () => {
             <input type="file" className="hidden" />
           </label>
         </div>
-        <Input name="name" label="상품 이름" type="text" required />
         <Input
+          register={register('name', { required: true })}
+          name="name"
+          label="상품 이름"
+          type="text"
+          required
+        />
+        <Input
+          register={register('price', { required: true })}
           name="price"
           label="판매 금액"
           type="text"
@@ -36,8 +72,13 @@ const Upload: NextPage = () => {
           placeholder="0"
           required
         />
-        <TextArea name="description" label="상품 설명" />
-        <Button text="상품 등록하기" />
+        <TextArea
+          register={register('description', { required: true })}
+          name="description"
+          label="상품 설명"
+          required
+        />
+        <Button text={loading ? '잠시만 기다려주세요...' : '상품 등록하기'} />
       </form>
     </Layout>
   );
