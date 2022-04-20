@@ -1,8 +1,27 @@
 import type { NextPage } from 'next';
 import Button from '@components/button';
 import Layout from '@components/layout';
+import { useRouter } from 'next/router';
+import useSWR from 'swr';
+import { Product, User } from '@prisma/client';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
+import Link from 'next/link';
+
+interface ProductWithUser extends Product {
+  user: User;
+}
+
+interface IProductDetailResponse {
+  ok: boolean;
+  product: ProductWithUser;
+}
 
 const ItemDetail: NextPage = () => {
+  const router = useRouter();
+  const { data } = useSWR<IProductDetailResponse>(
+    router.query.id ? `/api/products/${router.query.id}` : null
+  );
   return (
     <Layout canGoBack>
       <div className="p-4">
@@ -11,24 +30,27 @@ const ItemDetail: NextPage = () => {
           <div className="flex cursor-pointer items-center space-x-3 border-t border-b py-3">
             <div className="h-12 w-12 rounded-full bg-slate-300" />
             <div>
-              <p className="text-sm font-medium text-gray-700">Steve Hope</p>
-              <p className="text-xs font-medium text-gray-500">
-                프로필 보기 &rarr;
+              <p className="text-sm font-medium text-gray-700">
+                {data ? data.product.user.name : <Skeleton />}
               </p>
+              <Link href={`/users/profiles/${data?.product.user.id}`}>
+                <a className="text-xs font-medium text-gray-500">
+                  프로필 보기 &rarr;
+                </a>
+              </Link>
             </div>
           </div>
           <div className="mt-5">
-            <h1 className="text-3xl font-bold text-gray-900">iPhone 14</h1>
-            <span className="mt-3 block text-3xl text-gray-900">₩ 950,000</span>
+            <h1 className="text-3xl font-bold text-gray-900">
+              {data ? data.product.name : <Skeleton width={250} />}
+            </h1>
+            <span className="mt-3 block text-3xl text-gray-900">
+              {data ? `₩ ${data.product.price}` : <Skeleton width={200} />}
+            </span>
             <p className="my-6 text-base text-gray-700">
-              Lorem ipsum dolor sit, amet consectetur adipisicing elit. A cumque
-              distinctio possimus dicta quaerat incidunt placeat pariatur
-              laboriosam. Hic a eveniet quibusdam eos tempora placeat
-              exercitationem mollitia maiores cum. Tempore. Lorem ipsum dolor
-              sit amet consectetur adipisicing elit. Dicta molestias ullam optio
-              voluptatum. Quia velit mollitia similique quam ratione nulla,
-              debitis repellat quae magnam ullam, aut magni officiis illo dicta.
+              {data ? data.product.description : <Skeleton />}
             </p>
+
             <div className="flex items-center justify-between space-x-2">
               <Button text="채팅하기" large />
               <button className="flex items-center justify-center rounded-md p-3 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500">
