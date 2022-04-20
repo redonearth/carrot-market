@@ -23,13 +23,21 @@ interface IProductDetailResponse {
 
 const ItemDetail: NextPage = () => {
   const router = useRouter();
-  const { data } = useSWR<IProductDetailResponse>(
+  const { data, mutate } = useSWR<IProductDetailResponse>(
     router.query.id ? `/api/products/${router.query.id}` : null
   );
   const [toggleFavorite] = useMutation(
     `/api/products/${router.query.id}/favorite`
   );
   const onFavoriteClick = () => {
+    if (!data) return;
+    mutate(
+      {
+        ...data,
+        isLiked: !data.isLiked,
+      },
+      false
+    );
     toggleFavorite({});
   };
   return (
@@ -41,9 +49,9 @@ const ItemDetail: NextPage = () => {
             <div className="h-12 w-12 rounded-full bg-slate-300" />
             <div>
               <p className="text-sm font-medium text-gray-700">
-                {data ? data.product.user.name : <Skeleton />}
+                {data ? data?.product?.user?.name : <Skeleton />}
               </p>
-              <Link href={`/users/profiles/${data?.product.user.id}`}>
+              <Link href={`/users/profiles/${data?.product?.user?.id}`}>
                 <a className="text-xs font-medium text-gray-500">
                   프로필 보기 &rarr;
                 </a>
@@ -109,7 +117,7 @@ const ItemDetail: NextPage = () => {
         <div>
           <h2 className="text-2xl font-bold text-gray-900">비슷한 상품</h2>
           <div className="mt-6 grid grid-cols-2 gap-4">
-            {data?.relatedProducts.map((product) => (
+            {data?.relatedProducts?.map((product: any) => (
               <Link key={product.id} href={`/products/${product.id}`}>
                 <a>
                   <div className="mb-2 h-56 w-full bg-slate-300" />
