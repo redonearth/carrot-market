@@ -2,7 +2,7 @@ import type { NextPage } from 'next';
 import Button from '@components/button';
 import Layout from '@components/layout';
 import { useRouter } from 'next/router';
-import useSWR from 'swr';
+import useSWR, { useSWRConfig } from 'swr';
 import { Product, User } from '@prisma/client';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -23,7 +23,8 @@ interface IProductDetailResponse {
 
 const ItemDetail: NextPage = () => {
   const router = useRouter();
-  const { data, mutate } = useSWR<IProductDetailResponse>(
+  const { mutate } = useSWRConfig();
+  const { data, mutate: boundMutate } = useSWR<IProductDetailResponse>(
     router.query.id ? `/api/products/${router.query.id}` : null
   );
   const [toggleFavorite] = useMutation(
@@ -31,13 +32,8 @@ const ItemDetail: NextPage = () => {
   );
   const onFavoriteClick = () => {
     if (!data) return;
-    mutate(
-      {
-        ...data,
-        isLiked: !data.isLiked,
-      },
-      false
-    );
+    boundMutate((prev) => prev && { ...prev, isLiked: !prev.isLiked }, false);
+    // mutate('/api/users/me', (prev: any) => ({ ok: !prev.ok }), false);
     toggleFavorite({});
   };
   return (
