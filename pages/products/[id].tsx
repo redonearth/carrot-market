@@ -15,6 +15,7 @@ interface ProductWithUser extends Product {
 interface IProductDetailResponse {
   ok: boolean;
   product: ProductWithUser;
+  relatedProducts: Product[];
 }
 
 const ItemDetail: NextPage = () => {
@@ -42,10 +43,10 @@ const ItemDetail: NextPage = () => {
           </div>
           <div className="mt-5">
             <h1 className="text-3xl font-bold text-gray-900">
-              {data ? data.product.name : <Skeleton width={250} />}
+              {data ? data.product.name : <Skeleton width="90%" />}
             </h1>
             <span className="mt-3 block text-3xl text-gray-900">
-              {data ? `₩ ${data.product.price}` : <Skeleton width={200} />}
+              {data ? `₩ ${data.product.price}` : <Skeleton width="50%" />}
             </span>
             <p className="my-6 text-base text-gray-700">
               {data ? data.product.description : <Skeleton />}
@@ -76,14 +77,16 @@ const ItemDetail: NextPage = () => {
         <div>
           <h2 className="text-2xl font-bold text-gray-900">비슷한 상품</h2>
           <div className="mt-6 grid grid-cols-2 gap-4">
-            {[...Array(6)].map((_, i) => (
-              <div key={i}>
-                <div className="mb-2 h-56 w-full bg-slate-300" />
-                <h3 className="-mb-1 text-gray-700">Galaxy S23</h3>
-                <span className="text-sm font-medium text-gray-900">
-                  ₩ 1,000,000
-                </span>
-              </div>
+            {data?.relatedProducts.map((product) => (
+              <Link key={product.id} href={`/products/${product.id}`}>
+                <a>
+                  <div className="mb-2 h-56 w-full bg-slate-300" />
+                  <h3 className="-mb-1 text-gray-700">{product.name}</h3>
+                  <span className="text-sm font-medium text-gray-900">
+                    ₩ {product.price}
+                  </span>
+                </a>
+              </Link>
             ))}
           </div>
         </div>
