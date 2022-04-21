@@ -44,7 +44,7 @@ model Product {
   description String     @db.MediumText
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-  Favorites   Favorite[]
+  favorites   Favorite[]
 }
 
 model Favorite {

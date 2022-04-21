@@ -7,9 +7,15 @@ import Head from 'next/head';
 import useSWR from 'swr';
 import { Product } from '@prisma/client';
 
+interface ProductWithFavoritesCount extends Product {
+  _count: {
+    favorites: number;
+  };
+}
+
 interface IProductsResponse {
   ok: boolean;
-  products: Product[];
+  products: ProductWithFavoritesCount[];
 }
 
 const Home: NextPage = () => {
@@ -28,7 +34,7 @@ const Home: NextPage = () => {
             id={product.id}
             title={product.name}
             price={product.price}
-            hearts={4}
+            hearts={product._count.favorites}
             comments={4}
           />
         ))}
