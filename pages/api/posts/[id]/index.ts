@@ -9,6 +9,7 @@ async function handler(
 ) {
   const {
     query: { id },
+    session: { user },
   } = req;
   const post = await client.post.findUnique({
     where: {
@@ -41,6 +42,17 @@ async function handler(
       },
     },
   });
+  const isCurious = Boolean(
+    await client.curiosity.findFirst({
+      where: {
+        postId: post?.id,
+        userId: user?.id,
+      },
+      select: {
+        id: true,
+      },
+    })
+  );
   if (!post) {
     res.status(404).json({
       ok: false,
@@ -50,6 +62,7 @@ async function handler(
   res.json({
     ok: true,
     post,
+    isCurious,
   });
 }
 
