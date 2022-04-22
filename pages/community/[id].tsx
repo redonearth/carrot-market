@@ -10,6 +10,8 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import useMutation from '@libs/client/useMutation';
 import { joinClassNames } from '@libs/client/utils';
+import { useForm } from 'react-hook-form';
+import { useEffect } from 'react';
 
 interface AnswerWithUser extends Answer {
   user: User;
@@ -30,14 +32,26 @@ interface ICommunityPostResponse {
   isCurious: boolean;
 }
 
+interface IAnswerForm {
+  answer: string;
+}
+
+interface IAnswerResponse {
+  ok: boolean;
+  answer: Answer;
+}
+
 const CommunityPostDetail: NextPage = () => {
   const router = useRouter();
+  const { register, handleSubmit, reset } = useForm<IAnswerForm>();
   const { data, mutate: boundMutate } = useSWR<ICommunityPostResponse>(
     router.query.id ? `/api/posts/${router.query.id}` : null
   );
-  const [toggleCuriosity] = useMutation(
+  const [toggleCuriosity, { loading }] = useMutation(
     `/api/posts/${router.query.id}/curiosity`
   );
+  const [sendAnswer, { data: answerData, loading: answerLoading }] =
+    useMutation<IAnswerResponse>(`/api/posts/${router.query.id}/answers`);
   const onCuriosityClick = () => {
     if (!data) return;
     boundMutate(
@@ -56,8 +70,19 @@ const CommunityPostDetail: NextPage = () => {
       },
       false
     );
-    toggleCuriosity({});
+    if (!loading) {
+      toggleCuriosity({});
+    }
   };
+  const onValid = (form: IAnswerForm) => {
+    if (answerLoading) return;
+    sendAnswer(form);
+  };
+  useEffect(() => {
+    if (answerData && answerData.ok) {
+      reset();
+    }
+  }, [answerData, reset]);
   return (
     <Layout canGoBack>
       <div>
@@ -172,14 +197,17 @@ const CommunityPostDetail: NextPage = () => {
             </div>
           ))}
         </div>
-        <div className="px-4">
+        <form onSubmit={handleSubmit(onValid)} className="px-4">
           <TextArea
+            register={register('answer', { required: true, minLength: 5 })}
             name="description"
             placeholder="답변을 부탁해요!"
             required
           />
-          <Button text="답변하기" />
-        </div>
+          <Button
+            text={answerLoading ? '잠시만 기다려주세요...' : '답변하기'}
+          />
+        </form>
       </div>
     </Layout>
   );
