@@ -50,6 +50,12 @@ async function handler(
       },
     })
   );
+  if (!product) {
+    res.status(404).json({
+      ok: false,
+      error: '상품을 찾을 수 없습니다!',
+    });
+  }
   res.json({
     ok: true,
     product,
