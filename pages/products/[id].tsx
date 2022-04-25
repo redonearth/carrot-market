@@ -56,13 +56,13 @@ const ItemDetail: NextPage = () => {
           </div>
           <div className="mt-5">
             <h1 className="text-3xl font-bold text-gray-900">
-              {data ? data.product.name : <Skeleton width="90%" />}
+              {data ? data?.product?.name : <Skeleton width="90%" />}
             </h1>
             <span className="mt-3 block text-3xl text-gray-900">
-              {data ? `₩ ${data.product.price}` : <Skeleton width="50%" />}
+              {data ? `₩ ${data?.product?.price}` : <Skeleton width="50%" />}
             </span>
             <p className="my-6 text-base text-gray-700">
-              {data ? data.product.description : <Skeleton />}
+              {data ? data?.product?.description : <Skeleton />}
             </p>
 
             <div className="flex items-center justify-between space-x-2">
