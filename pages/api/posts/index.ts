@@ -8,13 +8,15 @@ async function handler(
   res: NextApiResponse<IResponseType>
 ) {
   const {
-    body: { question },
+    body: { question, latitude, longitude },
     session: { user },
   } = req;
   if (req.method === 'POST') {
     const post = await client.post.create({
       data: {
         question,
+        latitude,
+        longitude,
         user: {
           connect: {
             id: user?.id,
