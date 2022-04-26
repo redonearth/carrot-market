@@ -12,7 +12,7 @@ async function handler(
       include: {
         _count: {
           select: {
-            favorites: true,
+            records: true,
           },
         },
       },
