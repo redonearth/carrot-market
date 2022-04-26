@@ -2,11 +2,39 @@ import type { NextPage } from 'next';
 import Button from '@components/button';
 import Input from '@components/input';
 import Layout from '@components/layout';
+import useUser from '@libs/client/useUser';
+import { useForm } from 'react-hook-form';
+import { useEffect } from 'react';
+
+interface IEditProfileForm {
+  email?: string;
+  phone?: string;
+  formErrors?: string;
+}
 
 const EditProfile: NextPage = () => {
+  const { user } = useUser();
+  const {
+    register,
+    setValue,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<IEditProfileForm>();
+  useEffect(() => {
+    if (user?.email) setValue('email', user.email);
+    if (user?.phone) setValue('phone', user.phone);
+  }, [user, setValue]);
+  const onValid = ({ email, phone }: IEditProfileForm) => {
+    if (email === '' && phone === '') {
+      setError('formErrors', {
+        message: '이메일이나 전화번호 중 하나는 필수입니다.',
+      });
+    }
+  };
   return (
     <Layout title="프로필 수정" canGoBack>
-      <form className="space-y-4 py-10 px-4">
+      <form onSubmit={handleSubmit(onValid)} className="space-y-4 py-10 px-4">
         <div className="flex items-center space-x-3">
           <div className="h-14 w-14 rounded-full bg-slate-500" />
           <label
@@ -22,14 +50,24 @@ const EditProfile: NextPage = () => {
             />
           </label>
         </div>
-        <Input name="email" label="이메일 주소" type="email" required />
         <Input
+          register={register('email')}
+          name="email"
+          label="이메일 주소"
+          type="email"
+        />
+        <Input
+          register={register('phone')}
           name="phone"
           label="휴대폰 번호"
           type="number"
           kind="phone"
-          required
         />
+        {errors.formErrors ? (
+          <span className="my-2 block text-center font-semibold text-red-500">
+            {errors.formErrors.message}
+          </span>
+        ) : null}
         <Button text="프로필 수정하기" />
       </form>
     </Layout>
