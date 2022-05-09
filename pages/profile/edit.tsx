@@ -5,11 +5,18 @@ import Layout from '@components/layout';
 import useUser from '@libs/client/useUser';
 import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
+import useMutation from '@libs/client/useMutation';
 
 interface IEditProfileForm {
+  name?: string;
   email?: string;
   phone?: string;
   formErrors?: string;
+}
+
+interface IEditProfileResponse {
+  ok: boolean;
+  error?: string;
 }
 
 const EditProfile: NextPage = () => {
@@ -22,16 +29,30 @@ const EditProfile: NextPage = () => {
     formState: { errors },
   } = useForm<IEditProfileForm>();
   useEffect(() => {
+    if (user?.name) setValue('name', user.name);
     if (user?.email) setValue('email', user.email);
     if (user?.phone) setValue('phone', user.phone);
   }, [user, setValue]);
-  const onValid = ({ email, phone }: IEditProfileForm) => {
-    if (email === '' && phone === '') {
-      setError('formErrors', {
+  const [editProfile, { data, loading }] =
+    useMutation<IEditProfileResponse>(`/api/users/me`);
+  const onValid = ({ name, email, phone }: IEditProfileForm) => {
+    if (loading) return;
+    if (name === '' && email === '' && phone === '') {
+      return setError('formErrors', {
         message: '이메일이나 전화번호 중 하나는 필수입니다.',
       });
     }
+    editProfile({
+      name,
+      email,
+      phone,
+    });
   };
+  useEffect(() => {
+    if (data && !data.ok && data.error) {
+      setError('formErrors', { message: data.error });
+    }
+  }, [data, setError]);
   return (
     <Layout title="프로필 수정" canGoBack>
       <form onSubmit={handleSubmit(onValid)} className="space-y-4 py-10 px-4">
@@ -51,6 +72,12 @@ const EditProfile: NextPage = () => {
           </label>
         </div>
         <Input
+          register={register('name')}
+          name="name"
+          label="이름"
+          type="text"
+        />
+        <Input
           register={register('email')}
           name="email"
           label="이메일 주소"
@@ -68,7 +95,7 @@ const EditProfile: NextPage = () => {
             {errors.formErrors.message}
           </span>
         ) : null}
-        <Button text="프로필 수정하기" />
+        <Button text={loading ? '잠시만 기다려주세요...' : '프로필 수정하기'} />
       </form>
     </Layout>
   );
