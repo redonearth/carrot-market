@@ -69,9 +69,7 @@ const Enter: NextPage = () => {
               type="number"
               required
             />
-            <Button
-              text={tokenLoading ? '잠시만 기다려주세요...' : '인증하기'}
-            />
+            <Button isLoading={tokenLoading} text="인증하기" />
           </form>
         ) : (
           <>
@@ -125,14 +123,10 @@ const Enter: NextPage = () => {
                 />
               ) : null}
               {method === 'email' ? (
-                <Button
-                  text={loading ? '잠시만 기다려주세요...' : '로그인 링크 받기'}
-                />
+                <Button isLoading={loading} text="로그인 링크 받기" />
               ) : null}
               {method === 'phone' ? (
-                <Button
-                  text={loading ? '잠시만 기다려주세요...' : '인증번호 받기'}
-                />
+                <Button isLoading={loading} text="인증번호 받기" />
               ) : null}
             </form>
           </>

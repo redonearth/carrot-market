@@ -1,12 +1,14 @@
 import { joinClassNames } from '@libs/client/utils';
 
 interface ButtonProps {
+  isLoading?: boolean;
   large?: boolean;
   text: string;
   [key: string]: any;
 }
 
 export default function Button({
+  isLoading = false,
   large = false,
   onClick,
   text,
@@ -20,7 +22,7 @@ export default function Button({
         large ? 'py-3 text-base' : 'py-2 text-sm'
       )}
     >
-      {text}
+      {isLoading ? '잠시만 기다려주세요...' : text}
     </button>
   );
 }

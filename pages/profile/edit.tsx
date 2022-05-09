@@ -95,7 +95,7 @@ const EditProfile: NextPage = () => {
             {errors.formErrors.message}
           </span>
         ) : null}
-        <Button text={loading ? '잠시만 기다려주세요...' : '프로필 수정하기'} />
+        <Button isLoading={loading} text="프로필 수정하기" />
       </form>
     </Layout>
   );

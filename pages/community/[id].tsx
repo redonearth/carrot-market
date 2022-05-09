@@ -205,9 +205,7 @@ const CommunityPostDetail: NextPage = () => {
             placeholder="답변을 부탁해요!"
             required
           />
-          <Button
-            text={answerLoading ? '잠시만 기다려주세요...' : '답변하기'}
-          />
+          <Button isLoading={answerLoading} text="답변하기" />
         </form>
       </div>
     </Layout>
