@@ -11,6 +11,13 @@ async function handler(
     session: { user },
     body: { name, price, description },
   } = req;
+  if (req.method === 'GET') {
+    const streams = await client.stream.findMany();
+    res.json({
+      ok: true,
+      streams,
+    });
+  }
   if (req.method === 'POST') {
     const stream = await client.stream.create({
       data: {
