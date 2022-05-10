@@ -1,21 +1,32 @@
 import type { NextPage } from 'next';
 import Layout from '@components/layout';
 import Message from '@components/message';
+import useSWR from 'swr';
+import { useRouter } from 'next/router';
+import { Stream } from '@prisma/client';
+
+interface IStreamResponse {
+  ok: true;
+  stream: Stream;
+}
 
 const Stream: NextPage = () => {
+  const router = useRouter();
+  const { data } = useSWR<IStreamResponse>(
+    router.query.id ? `/api/streams/${router.query.id}` : null
+  );
   return (
     <Layout canGoBack>
       <div className="space-y-4 py-10 px-4">
         <div className="aspect-video w-full rounded-md bg-slate-300 shadow-sm" />
         <div className="mt-5">
-          <h1 className="text-3xl font-bold text-gray-900">iPhone 14</h1>
-          <span className="mt-3 block text-2xl text-gray-900">₩ 950,000</span>
-          <p className="my-6 text-gray-700">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis
-            saepe odio ipsam ut incidunt facere necessitatibus ea assumenda
-            debitis ullam dolorum ipsum exercitationem, dolorem, esse libero
-            iusto dolores laborum! Accusamus.
-          </p>
+          <h1 className="text-3xl font-bold text-gray-900">
+            {data?.stream?.name}
+          </h1>
+          <span className="mt-3 block text-2xl text-gray-900">
+            ₩ {data?.stream?.price}
+          </span>
+          <p className="my-6 text-gray-700">{data?.stream?.description}</p>
         </div>
         <div>
           <h2 className="text-2xl font-bold text-gray-900">라이브 채팅</h2>
