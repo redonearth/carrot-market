@@ -6,10 +6,25 @@ import { useRouter } from 'next/router';
 import { Stream } from '@prisma/client';
 import { useForm } from 'react-hook-form';
 import useMutation from '@libs/client/useMutation';
+import useUser from '@libs/client/useUser';
+import { useEffect } from 'react';
+
+interface StreamMessage {
+  id: number;
+  message: string;
+  user: {
+    id: number;
+    avatar?: string;
+  };
+}
+
+interface StreamWithMessages extends Stream {
+  messages: StreamMessage[];
+}
 
 interface IStreamResponse {
   ok: true;
-  stream: Stream;
+  stream: StreamWithMessages;
 }
 
 interface IMessageForm {
@@ -17,9 +32,10 @@ interface IMessageForm {
 }
 
 const Stream: NextPage = () => {
+  const { user } = useUser();
   const router = useRouter();
   const { register, handleSubmit, reset } = useForm<IMessageForm>();
-  const { data } = useSWR<IStreamResponse>(
+  const { data, mutate } = useSWR<IStreamResponse>(
     router.query.id ? `/api/streams/${router.query.id}` : null
   );
   const [sendMessage, { loading, data: sendMessageData }] = useMutation(
@@ -30,6 +46,11 @@ const Stream: NextPage = () => {
     reset();
     sendMessage(form);
   };
+  useEffect(() => {
+    if (sendMessageData && sendMessageData.ok) {
+      mutate();
+    }
+  }, [sendMessageData, mutate]);
   return (
     <Layout canGoBack>
       <div className="space-y-4 py-10 px-4">
@@ -46,9 +67,13 @@ const Stream: NextPage = () => {
         <div>
           <h2 className="text-2xl font-bold text-gray-900">라이브 채팅</h2>
           <div className="h-[50vh] space-y-4 overflow-y-scroll py-10 px-4 pb-16">
-            <Message message="안녕하세요. 다비드 투수 글러브 문의 드립니다." />
-            <Message message="10만원 네고 가능할까요?" />
-            <Message message="미쳤어?" reversed />
+            {data?.stream.messages.map((message) => (
+              <Message
+                key={message.id}
+                message={message.message}
+                reversed={message.user.id === user?.id}
+              />
+            ))}
           </div>
           <div className="fixed inset-x-0 bottom-0 bg-white py-2">
             <form
