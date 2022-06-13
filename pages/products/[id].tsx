@@ -135,19 +135,32 @@ const ItemDetail: NextPage = () => {
         </div>
         <div>
           <h2 className="text-2xl font-bold text-gray-900">비슷한 상품</h2>
-          <div className="mt-6 grid grid-cols-2 gap-4">
-            {data?.relatedProducts?.map((product: any) => (
-              <Link key={product.id} href={`/products/${product.id}`}>
-                <a>
-                  <div className="mb-2 h-56 w-full bg-slate-300" />
-                  <h3 className="-mb-1 text-gray-700">{product.name}</h3>
-                  <span className="text-sm font-medium text-gray-900">
-                    ₩ {product.price}
-                  </span>
-                </a>
-              </Link>
-            ))}
-          </div>
+          {data?.relatedProducts.length !== 0 ? (
+            <div className="mt-6 grid grid-cols-2 gap-4">
+              {data?.relatedProducts.map((product: any) => (
+                <Link key={product.id} href={`/products/${product.id}`}>
+                  <a>
+                    <div className="relative mb-2 h-56 w-full bg-slate-300">
+                      <Image
+                        src={`https://imagedelivery.net/Y45BUDi393Qe7-mR-gFRlA/${product.image}/public`}
+                        layout="fill"
+                        className="object-cover"
+                        alt="상품 사진"
+                      />
+                    </div>
+                    <h3 className="-mb-1 text-gray-700">{product.name}</h3>
+                    <span className="text-sm font-medium text-gray-900">
+                      ₩ {product.price}
+                    </span>
+                  </a>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="mt-6">
+              <span className="text-lg">상품이 없습니다. 😭</span>
+            </div>
+          )}
         </div>
       </div>
     </Layout>
