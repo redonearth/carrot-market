@@ -7,6 +7,7 @@ import { Review, User } from '@prisma/client';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { joinClassNames } from '@libs/client/utils';
+import Image from 'next/image';
 
 interface ReviewWithUser extends Review {
   createdBy: User;
@@ -24,7 +25,19 @@ const Profile: NextPage = () => {
     <Layout title="나의 캐럿" hasTabBar>
       <div className="px-4">
         <div className="mt-4 flex items-center space-x-3">
-          <div className="h-16 w-16 rounded-full bg-slate-500" />
+          {user?.avatar ? (
+            <div className="relative h-16 w-16 rounded-full">
+              <Image
+                src={`https://imagedelivery.net/Y45BUDi393Qe7-mR-gFRlA/${user?.avatar}/avatar`}
+                layout="fill"
+                className="rounded-full object-cover"
+                alt="Avatar"
+                priority={true}
+              />
+            </div>
+          ) : (
+            <div className="h-16 w-16 rounded-full bg-slate-500" />
+          )}
           <div className="flex flex-col">
             <span className="font-medium text-gray-900">
               {user ? user?.name : <Skeleton />}

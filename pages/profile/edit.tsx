@@ -35,21 +35,45 @@ const EditProfile: NextPage = () => {
     if (user?.name) setValue('name', user.name);
     if (user?.email) setValue('email', user.email);
     if (user?.phone) setValue('phone', user.phone);
+    if (user?.avatar)
+      setAvatarPreview(
+        `https://imagedelivery.net/Y45BUDi393Qe7-mR-gFRlA/${user?.avatar}/avatar`
+      );
   }, [user, setValue]);
   const [editProfile, { data, loading }] =
     useMutation<IEditProfileResponse>(`/api/users/me`);
-  const onValid = ({ name, email, phone, avatar }: IEditProfileForm) => {
+  const onValid = async ({ name, email, phone, avatar }: IEditProfileForm) => {
     if (loading) return;
     if (name === '' && email === '' && phone === '') {
       return setError('formErrors', {
         message: '이메일이나 전화번호 중 하나는 필수입니다.',
       });
     }
-    editProfile({
-      name,
-      email,
-      phone,
-    });
+    if (avatar && avatar.length > 0 && user) {
+      const { uploadURL } = await (await fetch(`/api/uploads`)).json();
+      const form = new FormData();
+      form.append('file', avatar[0], String(user.id));
+      const {
+        result: { id },
+      } = await (
+        await fetch(uploadURL, {
+          method: 'POST',
+          body: form,
+        })
+      ).json();
+      editProfile({
+        name,
+        email,
+        phone,
+        avatarId: id,
+      });
+    } else {
+      editProfile({
+        name,
+        email,
+        phone,
+      });
+    }
   };
   useEffect(() => {
     if (data && !data.ok && data.error) {
