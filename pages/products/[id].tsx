@@ -9,6 +9,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import Link from 'next/link';
 import useMutation from '@libs/client/useMutation';
 import { joinClassNames } from '@libs/client/utils';
+import Image from 'next/image';
 
 interface ProductWithUser extends Product {
   user: User;
@@ -40,12 +41,34 @@ const ItemDetail: NextPage = () => {
     <Layout canGoBack>
       <div className="p-4">
         <div className="mb-8">
-          <div className="h-96 bg-slate-300" />
+          {data ? (
+            <div className="relative h-96">
+              <Image
+                src={`https://imagedelivery.net/Y45BUDi393Qe7-mR-gFRlA/${data.product.image}/public`}
+                layout="fill"
+                className="object-cover"
+                alt="상품 사진"
+              />
+            </div>
+          ) : (
+            <div className="h-96 bg-slate-300" />
+          )}
           <div className="flex cursor-pointer items-center space-x-3 border-t border-b py-3">
-            <div className="h-12 w-12 rounded-full bg-slate-300" />
+            {data ? (
+              <div className="relative h-12 w-12 rounded-full bg-slate-300">
+                <Image
+                  src={`https://imagedelivery.net/Y45BUDi393Qe7-mR-gFRlA/${data.product.user.avatar}/avatar`}
+                  layout="fill"
+                  className="rounded-full object-cover"
+                  alt="Avatar"
+                />
+              </div>
+            ) : (
+              <div className="h-12 w-12 rounded-full bg-slate-300" />
+            )}
             <div>
               <p className="text-sm font-medium text-gray-700">
-                {data ? data?.product?.user?.name : <Skeleton />}
+                {data ? data.product.user.name : <Skeleton />}
               </p>
               <Link href={`/users/profiles/${data?.product?.user?.id}`}>
                 <a className="text-xs font-medium text-gray-500">
@@ -56,13 +79,13 @@ const ItemDetail: NextPage = () => {
           </div>
           <div className="mt-5">
             <h1 className="text-3xl font-bold text-gray-900">
-              {data ? data?.product?.name : <Skeleton width="90%" />}
+              {data ? data.product.name : <Skeleton width="90%" />}
             </h1>
             <span className="mt-3 block text-3xl text-gray-900">
-              {data ? `₩ ${data?.product?.price}` : <Skeleton width="50%" />}
+              {data ? `₩ ${data.product.price}` : <Skeleton width="50%" />}
             </span>
             <p className="my-6 text-base text-gray-700">
-              {data ? data?.product?.description : <Skeleton />}
+              {data ? data.product.description : <Skeleton />}
             </p>
 
             <div className="flex items-center justify-between space-x-2">
