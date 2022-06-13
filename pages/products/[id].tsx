@@ -41,7 +41,7 @@ const ItemDetail: NextPage = () => {
     <Layout canGoBack>
       <div className="p-4">
         <div className="mb-8">
-          {data ? (
+          {data?.product.image ? (
             <div className="relative h-96">
               <Image
                 src={`https://imagedelivery.net/Y45BUDi393Qe7-mR-gFRlA/${data.product.image}/public`}
@@ -54,7 +54,7 @@ const ItemDetail: NextPage = () => {
             <div className="h-96 bg-slate-300" />
           )}
           <div className="flex cursor-pointer items-center space-x-3 border-t border-b py-3">
-            {data ? (
+            {data?.product.user.avatar ? (
               <div className="relative h-12 w-12 rounded-full bg-slate-300">
                 <Image
                   src={`https://imagedelivery.net/Y45BUDi393Qe7-mR-gFRlA/${data.product.user.avatar}/avatar`}
