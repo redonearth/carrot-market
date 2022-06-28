@@ -68,7 +68,7 @@ const StreamDetail: NextPage = () => {
     // sendMessage(form);
   };
   return (
-    <Layout canGoBack>
+    <Layout seoTitle="라이브 상세" canGoBack>
       <div className="space-y-4 py-10 px-4">
         <div className="aspect-video w-full rounded-md bg-slate-300 shadow-sm" />
         <div className="mt-5">

@@ -38,7 +38,7 @@ const ItemDetail: NextPage = () => {
     toggleFavorite({});
   };
   return (
-    <Layout canGoBack>
+    <Layout seoTitle="상품 상세" canGoBack>
       <div className="p-4">
         <div className="mb-8">
           {data?.product.image ? (

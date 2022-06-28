@@ -23,7 +23,7 @@ const Home: NextPage = () => {
   const { data } = useSWR<IProductsResponse>('/api/products');
   console.log(data);
   return (
-    <Layout title="홈" hasTabBar>
+    <Layout title="홈" seoTitle="홈" hasTabBar>
       <Head>
         <title>캐럿 마켓</title>
       </Head>

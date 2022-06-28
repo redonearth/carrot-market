@@ -85,7 +85,7 @@ const CommunityPostDetail: NextPage = () => {
     }
   }, [answerData, reset, boundMutate]);
   return (
-    <Layout canGoBack>
+    <Layout seoTitle="동네 상세" canGoBack>
       <div>
         <span className="my-3 ml-4 inline-flex items-center rounded-full border-b-[2px] bg-gray-100 px-2.5 py-0.5 pl-4 text-xs font-medium">
           동네 질문

@@ -35,7 +35,7 @@ const Create: NextPage = () => {
     }
   }, [data, router]);
   return (
-    <Layout title="라이브 가기" canGoBack>
+    <Layout title="라이브 가기" seoTitle="라이브 가기" canGoBack>
       <form onSubmit={handleSubmit(onValid)} className="space-y-4 py-10 px-4">
         <Input
           register={register('name', { required: true })}
