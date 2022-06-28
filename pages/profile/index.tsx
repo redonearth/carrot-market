@@ -9,6 +9,7 @@ import 'react-loading-skeleton/dist/skeleton.css';
 import { joinClassNames } from '@libs/client/utils';
 import Image from 'next/image';
 import { withSsrSession } from '@libs/server/withSession';
+import client from '@libs/server/client';
 
 interface ReviewWithUser extends Review {
   createdBy: User;
@@ -180,7 +181,7 @@ const Page: NextPage<{ profile: User }> = ({ profile }) => {
 export const getServerSideProps = withSsrSession(async function ({
   req,
 }: NextPageContext) {
-  const profile = await client?.user.findUnique({
+  const profile = await client.user.findUnique({
     where: {
       id: req?.session.user?.id,
     },

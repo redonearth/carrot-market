@@ -6,6 +6,7 @@ import useUser from '@libs/client/useUser';
 import Head from 'next/head';
 import useSWR, { SWRConfig } from 'swr';
 import { Product } from '@prisma/client';
+import client from '@libs/server/client';
 
 export interface ProductWithFavoritesCount extends Product {
   _count: {
@@ -81,7 +82,7 @@ const Page: NextPage<{ products: ProductWithFavoritesCount[] }> = ({
 
 export async function getServerSideProps() {
   console.log('SSR');
-  const products = await client?.product.findMany({});
+  const products = await client.product.findMany({});
   return {
     props: {
       products: JSON.parse(JSON.stringify(products)),
