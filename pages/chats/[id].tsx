@@ -4,7 +4,7 @@ import Message from '@components/message';
 
 const ChatDetail: NextPage = () => {
   return (
-    <Layout title="칵승규" canGoBack>
+    <Layout title="칵승규" seoTitle="" canGoBack>
       <div className="space-y-4 py-10 px-4 pb-16">
         <Message message="안녕하세요. 다비드 투수 글러브 문의 드립니다." />
         <Message message="10만원 네고 가능할까요?" />
