@@ -13,7 +13,7 @@ async function handler(
   } = req;
   const alreadyExists = await client.curiosity.findFirst({
     where: {
-      postId: +id,
+      postId: +id!,
       userId: user?.id,
     },
   });
@@ -33,7 +33,7 @@ async function handler(
         },
         post: {
           connect: {
-            id: +id,
+            id: +id!,
           },
         },
       },

@@ -21,7 +21,7 @@ async function handler(
       },
       post: {
         connect: {
-          id: +id,
+          id: +id!,
         },
       },
       answer,

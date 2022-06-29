@@ -13,7 +13,7 @@ async function handler(
   } = req;
   const alreadyExists = await client.record.findFirst({
     where: {
-      productId: +id,
+      productId: +id!,
       userId: user?.id,
       kind: 'favorites',
     },
@@ -34,7 +34,7 @@ async function handler(
         },
         product: {
           connect: {
-            id: +id,
+            id: +id!,
           },
         },
         kind: 'favorites',

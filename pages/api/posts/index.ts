@@ -24,6 +24,7 @@ async function handler(
         },
       },
     });
+    await res.revalidate('/community');
     res.json({
       ok: true,
       post,
@@ -33,38 +34,44 @@ async function handler(
     const {
       query: { latitude, longitude },
     } = req;
-    const parsedLatitude = parseFloat(latitude.toString());
-    const parsedLongitude = parseFloat(longitude.toString());
-    const posts = await client.post.findMany({
-      where: {
-        latitude: {
-          gte: parsedLatitude - 0.01,
-          lte: parsedLatitude + 0.01,
-        },
-        longitude: {
-          gte: parsedLongitude - 0.01,
-          lte: parsedLongitude + 0.01,
-        },
-      },
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
+    const parsedLatitude = parseFloat(latitude!.toString());
+    const parsedLongitude = parseFloat(longitude!.toString());
+    client.$queryRaw`SET SESSION sql_mode =
+    'STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';`.then(
+      async () => {
+        const posts = await client.post.findMany({
+          where: {
+            latitude: {
+              gte: parsedLatitude - 0.01,
+              lte: parsedLatitude + 0.01,
+            },
+            longitude: {
+              gte: parsedLongitude - 0.01,
+              lte: parsedLongitude + 0.01,
+            },
           },
-        },
-        _count: {
-          select: {
-            curiosities: true,
-            answers: true,
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                avatar: true,
+              },
+            },
+            _count: {
+              select: {
+                curiosities: true,
+                answers: true,
+              },
+            },
           },
-        },
-      },
-    });
-    res.json({
-      ok: true,
-      posts,
-    });
+        });
+        res.json({
+          ok: true,
+          posts,
+        });
+      }
+    );
   }
 }
 

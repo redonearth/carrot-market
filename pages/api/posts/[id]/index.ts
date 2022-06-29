@@ -13,7 +13,7 @@ async function handler(
   } = req;
   const post = await client.post.findUnique({
     where: {
-      id: +id,
+      id: +id!,
     },
     include: {
       user: {

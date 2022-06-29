@@ -17,7 +17,7 @@ async function handler(
       message: body.message,
       stream: {
         connect: {
-          id: +id,
+          id: +id!,
         },
       },
       user: {
