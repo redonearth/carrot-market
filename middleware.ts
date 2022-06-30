@@ -1,6 +1,4 @@
-// eslint-disable-next-line @next/next/no-server-import-in-page
 import { NextResponse, userAgent } from 'next/server';
-// eslint-disable-next-line @next/next/no-server-import-in-page
 import type { NextRequest } from 'next/server';
 
 export function middleware(req: NextRequest) {
@@ -13,7 +11,9 @@ export function middleware(req: NextRequest) {
   }
   if (!req.url.includes('/api')) {
     if (!req.url.includes('/enter') && !req.cookies.get('carrot-session')) {
-      return NextResponse.redirect(`${req.nextUrl.origin}/enter`);
+      return NextResponse.redirect(
+        new URL(`${req.nextUrl.origin}/enter`, req.url)
+      );
     }
   }
 }
