@@ -52,7 +52,6 @@ const MiniProfile = () => {
 
 const Reviews = () => {
   const { data } = useSWR<IReviewsResponse>(
-    // '/api/reviews'
     typeof window === 'undefined' ? null : '/api/reviews'
   );
   return (
