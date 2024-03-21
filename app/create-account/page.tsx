@@ -39,7 +39,7 @@ export default function CreateAccount() {
           required
           errors={[]}
         />
-        <FormButton loading={false} text="Create Account" />
+        <FormButton text="Create Account" />
       </form>
 
       <SocialLogin />
