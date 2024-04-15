@@ -1,11 +1,14 @@
 "use server";
 
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import {
   PASSWORD_MIN_LENGTH,
   PASSWORD_REGEX,
   PASSWORD_REGEX_ERROR,
 } from "@/lib/constants";
 import db from "@/lib/db";
+import getSession from "@/lib/session";
 import { z } from "zod";
 import { hash } from "bcrypt";
 
@@ -74,7 +77,7 @@ export async function createAccount(prevState: any, formData: FormData) {
     confirmPassword: formData.get("confirmPassword"),
   };
 
-  const result = await formSchema.safeParseAsync(data);
+  const result = await formSchema.spa(data);
   if (!result.success) {
     return result.error.flatten();
   } else {
@@ -89,6 +92,11 @@ export async function createAccount(prevState: any, formData: FormData) {
         id: true,
       },
     });
-    console.log(user);
+
+    const session = await getSession();
+    session.id = user.id;
+    await session.save();
+
+    redirect("/profile");
   }
 }
