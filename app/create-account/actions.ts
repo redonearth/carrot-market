@@ -5,7 +5,9 @@ import {
   PASSWORD_REGEX,
   PASSWORD_REGEX_ERROR,
 } from "@/lib/constants";
+import db from "@/lib/db";
 import { z } from "zod";
+import { hash } from "bcrypt";
 
 const checkUsername = (username: string) => !username.includes("potato");
 
@@ -17,19 +19,46 @@ const checkPasswords = ({
   confirmPassword: string;
 }) => password === confirmPassword;
 
+const checkUniqueUsername = async (username: string) => {
+  const user = await db.user.findUnique({
+    where: {
+      username,
+    },
+    select: {
+      id: true,
+    },
+  });
+  return !Boolean(user);
+};
+
+const checkUniqueEmail = async (email: string) => {
+  const user = await db.user.findUnique({
+    where: {
+      email,
+    },
+    select: {
+      id: true,
+    },
+  });
+  return !Boolean(user);
+};
+
 const formSchema = z
   .object({
     username: z
       .string()
       .toLowerCase()
       .trim()
-      .transform((username) => `😭 ${username} 😭`)
-      .refine(checkUsername, "감자는 허용하지 않아요"),
-    email: z.string().email().toLowerCase(),
-    password: z
+      // .transform((username) => `😭 ${username} 😭`)
+      .refine(checkUsername, "감자는 허용하지 않아요")
+      .refine(checkUniqueUsername, "사용 중인 이름입니다."),
+    email: z
       .string()
-      .min(PASSWORD_MIN_LENGTH)
-      .regex(PASSWORD_REGEX, PASSWORD_REGEX_ERROR),
+      .email()
+      .toLowerCase()
+      .refine(checkUniqueEmail, "사용 중인 이메일입니다."),
+    password: z.string().min(PASSWORD_MIN_LENGTH),
+    // .regex(PASSWORD_REGEX, PASSWORD_REGEX_ERROR),
     confirmPassword: z.string().min(PASSWORD_MIN_LENGTH),
   })
   .refine(checkPasswords, {
@@ -45,10 +74,21 @@ export async function createAccount(prevState: any, formData: FormData) {
     confirmPassword: formData.get("confirmPassword"),
   };
 
-  const result = formSchema.safeParse(data);
+  const result = await formSchema.safeParseAsync(data);
   if (!result.success) {
     return result.error.flatten();
   } else {
-    console.log(result.data);
+    const hashedPassword = await hash(result.data.password, 12);
+    const user = await db.user.create({
+      data: {
+        username: result.data.username,
+        email: result.data.email,
+        password: hashedPassword,
+      },
+      select: {
+        id: true,
+      },
+    });
+    console.log(user);
   }
 }
