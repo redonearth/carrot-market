@@ -1,5 +1,6 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import {
   PASSWORD_MIN_LENGTH,
   PASSWORD_REGEX,
@@ -61,6 +62,7 @@ export async function login(prevState: any, formData: FormData) {
 
     if (ok) {
       await saveSession(user!.id);
+      redirect("/profile");
     } else {
       return {
         fieldErrors: {

@@ -1,5 +1,6 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import {
   PASSWORD_MIN_LENGTH,
   PASSWORD_REGEX,
@@ -103,5 +104,6 @@ export async function createAccount(prevState: any, formData: FormData) {
     });
 
     await saveSession(user.id);
+    redirect("/profile");
   }
 }

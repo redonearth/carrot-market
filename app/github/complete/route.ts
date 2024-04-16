@@ -1,7 +1,8 @@
+import { NextRequest } from "next/server";
+import { redirect } from "next/navigation";
 import db from "@/lib/db";
 import saveSession from "@/lib/saveSession";
 import { getAccessToken, getUserEmail, getUserProfile } from "./utils";
-import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
   const accessToken = await getAccessToken(request);
@@ -23,7 +24,8 @@ export async function GET(request: NextRequest) {
   });
 
   if (user) {
-    return await saveSession(user.id);
+    await saveSession(user.id);
+    return redirect("/profile");
   }
 
   const newUser = await db.user.create({
@@ -37,5 +39,6 @@ export async function GET(request: NextRequest) {
       id: true,
     },
   });
-  return await saveSession(newUser.id);
+  await saveSession(newUser.id);
+  return redirect("/profile");
 }
