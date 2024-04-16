@@ -2,15 +2,15 @@ import { NextConfig } from "next";
 import { NextRequest, NextResponse } from "next/server";
 import getSession from "./lib/session";
 
-interface Routes {
-  [key: string]: boolean;
-}
+type Routes = Record<string, boolean>;
 
 const publicOnlyUrls: Routes = {
   "/": true,
   "/login": true,
   "/sms": true,
   "/create-account": true,
+  "/github/start": true,
+  "/github/complete": true,
 };
 
 export async function middleware(request: NextRequest) {

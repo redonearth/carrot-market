@@ -1,13 +1,12 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import {
   PASSWORD_MIN_LENGTH,
   PASSWORD_REGEX,
   PASSWORD_REGEX_ERROR,
 } from "@/lib/constants";
+import saveSession from "@/lib/saveSession";
 import db from "@/lib/db";
-import getSession from "@/lib/session";
 import { z } from "zod";
 import { compare } from "bcrypt";
 
@@ -61,11 +60,7 @@ export async function login(prevState: any, formData: FormData) {
     const ok = await compare(result.data.password, user!.password ?? "");
 
     if (ok) {
-      const session = await getSession();
-      session.id = user!.id;
-      await session.save();
-
-      redirect("/profile");
+      await saveSession(user!.id);
     } else {
       return {
         fieldErrors: {

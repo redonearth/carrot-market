@@ -1,13 +1,12 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import {
   PASSWORD_MIN_LENGTH,
   PASSWORD_REGEX,
   PASSWORD_REGEX_ERROR,
 } from "@/lib/constants";
 import db from "@/lib/db";
-import getSession from "@/lib/session";
+import saveSession from "@/lib/saveSession";
 import { z } from "zod";
 import { hash } from "bcrypt";
 
@@ -103,10 +102,6 @@ export async function createAccount(prevState: any, formData: FormData) {
       },
     });
 
-    const session = await getSession();
-    session.id = user.id;
-    await session.save();
-
-    redirect("/profile");
+    await saveSession(user.id);
   }
 }
