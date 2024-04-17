@@ -4,13 +4,38 @@ import { ChangeEvent, useState } from "react";
 import { useFormState } from "react-dom";
 import Button from "@/components/button";
 import Input from "@/components/input";
-import { uploadProduct } from "./actions";
+import { getUploadUrl, uploadProduct } from "./actions";
 import { PhotoIcon } from "@heroicons/react/24/solid";
 
 export default function AddProduct() {
   const [preview, setPreview] = useState("");
-  const [state, dispatch] = useFormState(uploadProduct, null);
-  const onImageChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const [photoUploadUrl, setPhotoUploadUrl] = useState("");
+  const [photoId, setPhotoId] = useState("");
+
+  const interceptAction = async (_: any, formData: FormData) => {
+    // 1. Cloudflare에 이미지 업로드
+    const file = formData.get("photo");
+    if (!file) return;
+
+    const cloudflareForm = new FormData();
+    cloudflareForm.append("file", file);
+
+    const response = await fetch(photoUploadUrl, {
+      method: "POST",
+      body: cloudflareForm,
+    });
+
+    if (response.status !== 200) return;
+
+    // 2. formData를 변경
+    const photoUrl = `https://imagedelivery.net/Y45BUDi393Qe7-mR-gFRlA/${photoId}`;
+    formData.set("photo", photoUrl);
+
+    // 3. uploadProduct 호출
+    return uploadProduct(_, formData);
+  };
+
+  const onImageChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const {
       target: { files },
     } = event;
@@ -19,10 +44,19 @@ export default function AddProduct() {
     const url = URL.createObjectURL(file);
     setPreview(url);
 
+    const { success, result } = await getUploadUrl();
+    if (success) {
+      const { id, uploadURL } = result;
+      setPhotoUploadUrl(uploadURL);
+      setPhotoId(id);
+    }
+
     // TODO:
     // 1. image 형식인지 확인
     // 2. 파일 크기 제한
   };
+
+  const [state, dispatch] = useFormState(interceptAction, null);
 
   return (
     <div>

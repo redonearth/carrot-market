@@ -20,7 +20,12 @@ export default function ListProduct({
   return (
     <Link href={`/products/${id}`} className="flex items-center gap-x-5">
       <div className="relative size-28 rounded-md overflow-hidden">
-        <Image fill className="object-cover" src={photo} alt={title} />
+        <Image
+          fill
+          className="object-cover"
+          src={`${photo}/avatar`}
+          alt={title}
+        />
       </div>
 
       <div className="flex flex-col gap-y-1 *:text-white">

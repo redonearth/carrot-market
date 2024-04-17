@@ -4,11 +4,10 @@ import { redirect } from "next/navigation";
 import db from "@/lib/db";
 import getSession from "@/lib/session";
 import { z } from "zod";
-import fs from "fs/promises";
 
 const productSchema = z.object({
-  title: z.string({ required_error: "제목은 필수입니다." }),
-  photo: z.string({ required_error: "사진은 필수입니다." }),
+  title: z.string({ required_error: "제목은 필수입니다." }).trim(),
+  photo: z.string({ required_error: "사진은 필수입니다." }).trim(),
   description: z.string({ required_error: "상품 설명을 적어주세요." }),
   price: z.coerce.number({ required_error: "상품 가격을 입력해주세요." }),
 });
@@ -20,11 +19,7 @@ export async function uploadProduct(_: any, formData: FormData) {
     description: formData.get("description"),
     price: formData.get("price"),
   };
-  if (data.photo instanceof File) {
-    const photoData = await data.photo.arrayBuffer();
-    await fs.appendFile(`./public/${data.photo.name}`, Buffer.from(photoData));
-    data.photo = `/${data.photo.name}`;
-  }
+
   const result = productSchema.safeParse(data);
   if (!result.success) {
     return result.error.flatten();
@@ -51,4 +46,27 @@ export async function uploadProduct(_: any, formData: FormData) {
       redirect(`/products/${product.id}`);
     }
   }
+}
+
+interface CloudflareOneTimeUploadUrl {
+  result: {
+    id: string;
+    uploadURL: string;
+  };
+  success: boolean;
+  errors: string[];
+  messages: string[];
+}
+
+export async function getUploadUrl(): Promise<CloudflareOneTimeUploadUrl> {
+  const response = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/images/v2/direct_upload`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
+      },
+    }
+  );
+  return await response.json();
 }
