@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { formatToTimeAgo, formatToWon } from "@/lib/utils";
 
 interface ListProductProps {
   id: number;
@@ -17,7 +18,7 @@ export default function ListProduct({
   created_at,
 }: ListProductProps) {
   return (
-    <Link href={`/products/${id}`} className="flex gap-x-5">
+    <Link href={`/products/${id}`} className="flex items-center gap-x-5">
       <div className="relative size-28 rounded-md overflow-hidden">
         <Image fill src={photo} alt={title} />
       </div>
@@ -25,9 +26,9 @@ export default function ListProduct({
       <div className="flex flex-col gap-y-1 *:text-white">
         <span className="text-lg">{title}</span>
         <span className="text-sm text-neutral-500">
-          {created_at.toString()}
+          {formatToTimeAgo(created_at.toString())}
         </span>
-        <span className="text-lg font-semibold">{price}</span>
+        <span className="text-lg font-semibold">{formatToWon(price)}원</span>
       </div>
     </Link>
   );
