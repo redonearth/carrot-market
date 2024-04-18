@@ -1,9 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+
 import db from "@/lib/db";
 import getSession from "@/lib/session";
 import { formatToWon } from "@/lib/utils";
+
 import { UserIcon } from "@heroicons/react/24/solid";
 
 async function getIsOwner(userId: number) {
@@ -15,7 +17,7 @@ async function getIsOwner(userId: number) {
   return false;
 }
 
-async function getProduct(id: number) {
+export async function getProduct(id: number) {
   const product = await db.product.findUnique({
     where: {
       id,
@@ -65,9 +67,9 @@ export default async function ProductDetail({
           {product.user.avatar !== null ? (
             <Image
               src={product.user.avatar}
+              alt={product.user.username}
               width={40}
               height={40}
-              alt={product.user.username}
             />
           ) : (
             <UserIcon />
