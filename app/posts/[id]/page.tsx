@@ -1,16 +1,14 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { unstable_cache as nextCache, revalidateTag } from "next/cache";
+import { unstable_cache as nextCache } from "next/cache";
+
+import LikeButton from "@/components/like-button";
 
 import getSession from "@/lib/session";
 import db from "@/lib/db";
 import { formatToTimeAgo } from "@/lib/utils";
 
-import {
-  EyeIcon,
-  HeartIcon as SolidHeartIcon,
-} from "@heroicons/react/24/solid";
-import { HeartIcon as OutlineHeartIcon } from "@heroicons/react/24/outline";
+import { EyeIcon } from "@heroicons/react/24/solid";
 
 async function getPost(id: number) {
   try {
@@ -43,11 +41,10 @@ async function getPost(id: number) {
   }
 }
 
-const getCachedPost = getPost;
-// const getCachedPost = nextCache(getPost, ["post-detail"], {
-//   tags: ["post-detail"],
-//   revalidate: 60,
-// });
+const getCachedPost = nextCache(getPost, ["post-detail"], {
+  tags: ["post-detail"],
+  revalidate: 60,
+});
 
 async function getLikeStatus(postId: number) {
   const session = await getSession();
@@ -96,42 +93,6 @@ export default async function PostDetail({
     return notFound();
   }
 
-  const likePost = async () => {
-    "use server";
-
-    try {
-      const session = await getSession();
-
-      await db.like.create({
-        data: {
-          postId: id,
-          userId: session.id!,
-        },
-      });
-
-      revalidateTag(`like-status-${id}`);
-    } catch (error) {}
-  };
-
-  const dislikePost = async () => {
-    "use server";
-
-    try {
-      const session = await getSession();
-
-      await db.like.delete({
-        where: {
-          id: {
-            postId: id,
-            userId: session.id!,
-          },
-        },
-      });
-
-      revalidateTag(`like-status-${id}`);
-    } catch (error) {}
-  };
-
   const { likeCount, isLiked } = await getCachedLikeStatus(id);
 
   return (
@@ -162,21 +123,7 @@ export default async function PostDetail({
           <span className="font-semibold">조회 {post.views}</span>
         </div>
 
-        <form action={isLiked ? dislikePost : likePost}>
-          <div className="flex items-center gap-x-2">
-            <button
-              className={`flex items-center gap-x-2 text-neutral-400 text-sm border border-neutral-400 p-2 rounded-full transition-colors ${isLiked ? "bg-orange-500 text-white border-orange-500" : "hover:bg-neutral-800"}`}
-            >
-              {isLiked ? (
-                <SolidHeartIcon className="size-5" />
-              ) : (
-                <OutlineHeartIcon className="size-5" />
-              )}
-            </button>
-
-            <span className="font-semibold">좋아요 {likeCount}개</span>
-          </div>
-        </form>
+        <LikeButton postId={id} isLiked={isLiked} likeCount={likeCount} />
       </div>
     </div>
   );
