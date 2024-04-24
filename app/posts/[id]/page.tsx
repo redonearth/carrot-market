@@ -8,7 +8,7 @@ import getSession from "@/lib/session";
 import db from "@/lib/db";
 import { formatToTimeAgo } from "@/lib/utils";
 
-import { EyeIcon } from "@heroicons/react/24/solid";
+import { EyeIcon, UserIcon } from "@heroicons/react/24/solid";
 
 async function getPost(id: number) {
   try {
@@ -97,14 +97,19 @@ export default async function PostDetail({
 
   return (
     <div className="p-5 text-white">
-      <div className="flex items-center gap-x-2 mb-2">
-        <Image
-          width={28}
-          height={28}
-          className="size-7 rounded-full"
-          src={post.user.avatar!}
-          alt={post.user.username}
-        />
+      <div className="flex items-center gap-x-3 mb-2">
+        <div className="size-10 rounded-full overflow-hidden">
+          {post.user.avatar !== null ? (
+            <Image
+              width={28}
+              height={28}
+              src={post.user.avatar!}
+              alt={post.user.username}
+            />
+          ) : (
+            <UserIcon className="bg-gray-600" />
+          )}
+        </div>
 
         <div>
           <span>{post.user.username}</span>

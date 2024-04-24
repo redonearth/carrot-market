@@ -97,7 +97,7 @@ export default async function ProductDetail({
               height={40}
             />
           ) : (
-            <UserIcon />
+            <UserIcon className="bg-gray-600" />
           )}
         </div>
 

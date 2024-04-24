@@ -110,7 +110,7 @@ export default function ChatMessageList({
                     className="size-8 rounded-full"
                   />
                 ) : (
-                  <UserIcon />
+                  <UserIcon className="bg-gray-600" />
                 )}
               </>
             )}

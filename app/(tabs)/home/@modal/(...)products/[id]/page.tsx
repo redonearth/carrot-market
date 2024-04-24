@@ -36,7 +36,7 @@ export default async function Modal({ params }: { params: { id: string } }) {
             </div>
 
             <div className="flex flex-col gap-y-4">
-              <div className="py-3 flex items-center gap-3 border-b border-neutral-700">
+              <div className="py-3 flex items-center gap-x-3 border-b border-neutral-700">
                 <div className="size-10 rounded-full overflow-hidden">
                   {product.user.avatar !== null ? (
                     <Image
@@ -46,7 +46,7 @@ export default async function Modal({ params }: { params: { id: string } }) {
                       height={40}
                     />
                   ) : (
-                    <UserIcon />
+                    <UserIcon className="bg-gray-600" />
                   )}
                 </div>
 
